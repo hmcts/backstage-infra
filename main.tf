@@ -51,7 +51,7 @@ resource "azurerm_postgresql_database" "backstage_plugin_catalog" {
   collation           = "English_United States.1252"
 }
 
-resource "azurerm_postgresql_database" "backstage_plugin_catalog" {
+resource "azurerm_postgresql_database" "backstage_plugin_auth" {
   name                = "backstage_plugin_auth"
   resource_group_name = azurerm_postgresql_server.db.resource_group_name
   server_name         = azurerm_postgresql_server.db.name
