@@ -43,6 +43,22 @@ resource "azurerm_postgresql_server" "db" {
   ssl_minimal_tls_version_enforced = "TLS1_2"
 }
 
+resource "azurerm_postgresql_database" "backstage_plugin_catalog" {
+  name                = "backstage_plugin_catalog"
+  resource_group_name = azurerm_postgresql_server.db.resource_group_name
+  server_name         = azurerm_postgresql_server.db.name
+  charset             = "UTF8"
+  collation           = "English_United States.1252"
+}
+
+resource "azurerm_postgresql_database" "backstage_plugin_auth" {
+  name                = "backstage_plugin_auth"
+  resource_group_name = azurerm_postgresql_server.db.resource_group_name
+  server_name         = azurerm_postgresql_server.db.name
+  charset             = "UTF8"
+  collation           = "English_United States.1252"
+}
+
 data "azurerm_subnet" "subnet-00" {
   name                 = "aks-00"
   resource_group_name  = "aks-infra-cft${var.env}-intsvc-rg"
