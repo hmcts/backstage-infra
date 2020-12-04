@@ -47,6 +47,16 @@ stages:
           build: $(Build.BuildNumber)
           agentPool: ${{ variables.agentPool }}
           terraformVersion: ${{ variables.terraformVersion }}
+      - template: pipeline-templates/terraform-plan.yaml
+        parameters:
+          environment: 'ptl'
+          component: 'backstage'
+          service_connection: 'DTS-CFTPTL-INTSVC'
+          storage_account_rg: 'core-infra-intsvc-rg'
+          storage_account_name: 'cftptlintsvc'
+          build: $(Build.BuildNumber)
+          agentPool: ${{ variables.agentPool }}
+          terraformVersion: ${{ variables.terraformVersion }}
       - job: Archive
         dependsOn: Plan_sbox_backstage
         pool:
@@ -76,6 +86,16 @@ stages:
           service_connection: 'DTS-CFTSBOX-INTSVC'
           storage_account_rg: 'core-infra-intsvc-rg'
           storage_account_name: 'cftsboxintsvc'
+          build: $(Build.BuildNumber)
+          agentPool: ${{ variables.agentPool }}
+          terraformVersion: ${{ variables.terraformVersion }}
+      - template: pipeline-templates/terraform-apply.yaml
+        parameters:
+          environment: 'ptl'
+          component: 'backstage'
+          service_connection: 'DTS-CFTPTL-INTSVC'
+          storage_account_rg: 'core-infra-intsvc-rg'
+          storage_account_name: 'cftptlintsvc'
           build: $(Build.BuildNumber)
           agentPool: ${{ variables.agentPool }}
           terraformVersion: ${{ variables.terraformVersion }}
