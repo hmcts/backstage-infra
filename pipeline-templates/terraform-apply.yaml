@@ -1,5 +1,5 @@
 jobs:
-  - deployment: Deploy
+  - deployment: Deploy ${{ parameters.environment }}
     pool:
       vmImage: ${{ parameters.agentPool }}
     environment: ${{ parameters.environment }}
