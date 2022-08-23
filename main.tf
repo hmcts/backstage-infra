@@ -15,6 +15,8 @@ locals {
   key_vault_name = var.env == "ptlsbox" ? "cftsbox-intsvc" : "cftptl-intsvc"
   old_vnet_name  = var.env == "ptlsbox" ? "core-cftsbox-intsvc-vnet" : "core-cftptl-intsvc-vnet"
   old_vnet_rg    = var.env == "ptlsbox" ? "aks-infra-cftsbox-intsvc-rg" : "aks-infra-cftptl-intsvc-rg"
+
+  old_env = var.env == "ptlsbox" ? "sbox" : var.env
 }
 
 data "azurerm_key_vault" "ptl" {
@@ -23,7 +25,7 @@ data "azurerm_key_vault" "ptl" {
 }
 
 resource "azurerm_postgresql_server" "db" {
-  name                = "hmcts-backstage-${var.env}"
+  name                = "hmcts-backstage-${local.old_env}"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
@@ -93,8 +95,11 @@ module "postgresql" {
 
   pgsql_databases = [
     {
-      name : "application"
-    }
+      name : "backstage_plugin_catalog"
+    },
+    {
+      name : "backstage_plugin_auth"
+    },
   ]
   pgsql_delegated_subnet_id = data.azurerm_subnet.this.id
   pgsql_version             = "14"
