@@ -71,3 +71,30 @@ resource "azurerm_postgresql_virtual_network_rule" "cluster-access" {
   server_name         = azurerm_postgresql_server.db.name
   subnet_id           = data.azurerm_subnet.subnet-00.id
 }
+
+module "tags" {
+  source      = "git::https://github.com/hmcts/terraform-module-common-tags?ref=master"
+  builtFrom   = var.builtFrom
+  environment = var.env
+  product     = "cft-platform"
+}
+
+module "postgresql" {
+  source = "git::https://github.com/hmcts/terraform-module-postgresql-flexible?ref=master"
+  env    = var.env
+
+  product   = var.product
+  component = var.component
+  name = "${var.product}-${var.component}-flex"
+  project     = "cft"
+
+  pgsql_databases = [
+    {
+      name : "application"
+    }
+  ]
+  pgsql_delegated_subnet_id = data.azurerm_subnet.subnet-00.id
+  pgsql_version             = "14"
+
+  common_tags = module.tags.common_tags
+}

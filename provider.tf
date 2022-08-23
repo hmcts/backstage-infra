@@ -1,10 +1,10 @@
 provider "azurerm" {
-  version = "=2.22.0"
+  version = "=3.19.1"
   features {}
 }
 
 provider "random" {
-  version = "=2.2"
+  version = "=3.3.2"
 }
 
 terraform {
