@@ -8,8 +8,8 @@ trigger:
       - master
 
 variables:
-  terraformVersion: 0.13.0
-  agentPool: 'ubuntu-18.04'
+  terraformVersion: 1.2.7
+  agentPool: 'ubuntu-latest'
   action:
 
 stages:
@@ -39,7 +39,7 @@ stages:
 
       - template: pipeline-templates/terraform-plan.yaml
         parameters:
-          environment: 'sbox'
+          environment: 'ptlsbox'
           component: 'backstage'
           service_connection: 'DTS-CFTSBOX-INTSVC'
           storage_account_rg: 'core-infra-intsvc-rg'
@@ -58,7 +58,7 @@ stages:
           agentPool: ${{ variables.agentPool }}
           terraformVersion: ${{ variables.terraformVersion }}
       - job: Archive
-        dependsOn: Plan_sbox_backstage
+        dependsOn: Plan_ptlsbox_backstage
         pool:
           vmImage: ${{ variables.agentPool }}
         steps:
@@ -81,7 +81,7 @@ stages:
     jobs:
       - template: pipeline-templates/terraform-apply.yaml
         parameters:
-          environment: 'sbox'
+          environment: 'ptlsbox'
           component: 'backstage'
           service_connection: 'DTS-CFTSBOX-INTSVC'
           storage_account_rg: 'core-infra-intsvc-rg'
