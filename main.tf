@@ -13,8 +13,8 @@ resource "random_password" "password" {
 
 locals {
   key_vault_name = var.env == "ptlsbox" ? "cftsbox-intsvc" : "cftptl-intsvc"
-  old_vnet_name = var.env == "ptlsbox" ? "core-cftsbox-intsvc-vnet" : "core-cftptl-intsvc-vnet"
-  old_vnet_rg = var.env == "ptlsbox" ? "aks-infra-cftsbox-intsvc-rg" : "aks-infra-cftptl-intsvc-rg"
+  old_vnet_name  = var.env == "ptlsbox" ? "core-cftsbox-intsvc-vnet" : "core-cftptl-intsvc-vnet"
+  old_vnet_rg    = var.env == "ptlsbox" ? "aks-infra-cftsbox-intsvc-rg" : "aks-infra-cftptl-intsvc-rg"
 }
 
 data "azurerm_key_vault" "ptl" {
