@@ -65,11 +65,18 @@ data "azurerm_subnet" "subnet-00" {
   virtual_network_name = "core-cft${var.env}-intsvc-vnet"
 }
 
+
 resource "azurerm_postgresql_virtual_network_rule" "cluster-access" {
   name                = "aks-00"
   resource_group_name = azurerm_resource_group.rg.name
   server_name         = azurerm_postgresql_server.db.name
   subnet_id           = data.azurerm_subnet.subnet-00.id
+}
+
+data "azurerm_subnet" "this" {
+  name                 = "postgresql"
+  resource_group_name  = "cft-${var.env}-network-rg"
+  virtual_network_name = "cft-${var.env}-vnet"
 }
 
 module "tags" {
@@ -80,20 +87,20 @@ module "tags" {
 }
 
 module "postgresql" {
-  source = "git::https://github.com/hmcts/terraform-module-postgresql-flexible?ref=master"
+  source = "git::https://github.com/hmcts/terraform-module-postgresql-flexible?ref=make-subnet-flexible"
   env    = var.env
 
   product   = var.product
   component = var.component
-  name = "${var.product}-${var.component}-flex"
-  project     = "cft"
+  name      = "${var.product}-${var.component}-flex"
+  project   = "cft"
 
   pgsql_databases = [
     {
       name : "application"
     }
   ]
-  pgsql_delegated_subnet_id = data.azurerm_subnet.subnet-00.id
+  pgsql_delegated_subnet_id = data.azurerm_subnet.this.id
   pgsql_version             = "14"
 
   common_tags = module.tags.common_tags
