@@ -1,6 +1,8 @@
 resource "azurerm_resource_group" "rg" {
   name     = "incident-backstage-rg"
   location = "UK South"
+
+  tags = module.tags.common_tags
 }
 
 resource "random_password" "password" {
@@ -40,6 +42,8 @@ resource "azurerm_postgresql_server" "db" {
 
   ssl_enforcement_enabled          = true
   ssl_minimal_tls_version_enforced = "TLS1_2"
+
+  tags = module.tags.common_tags
 }
 
 resource "azurerm_postgresql_database" "backstage_plugin_catalog" {
