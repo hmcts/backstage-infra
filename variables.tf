@@ -8,3 +8,6 @@ variable "component" {
 variable "builtFrom" {
   default = "hmcts/backstage-infra"
 }
+
+variable "env" {
+}

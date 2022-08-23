@@ -81,7 +81,7 @@ stages:
     jobs:
       - template: pipeline-templates/terraform-apply.yaml
         parameters:
-          environment: 'sbox'
+          environment: 'ptlsbox'
           component: 'backstage'
           service_connection: 'DTS-CFTSBOX-INTSVC'
           storage_account_rg: 'core-infra-intsvc-rg'

@@ -11,18 +11,13 @@ resource "random_password" "password" {
   number  = true
 }
 
+locals {
+  key_vault_name = var.env == "ptlsbox" ? "cftsbox-intsvc" : "cftptl-intsvc"
+}
+
 data "azurerm_key_vault" "ptl" {
-  name                = "cft${var.env}-intsvc"
+  name                = local.key_vault_name
   resource_group_name = "core-infra-intsvc-rg"
-}
-
-resource "azurerm_key_vault_secret" "backstage-db-secret" {
-  name         = "backstage-db-password"
-  value        = random_password.password.result
-  key_vault_id = data.azurerm_key_vault.ptl.id
-}
-
-variable "env" {
 }
 
 resource "azurerm_postgresql_server" "db" {
@@ -65,7 +60,6 @@ data "azurerm_subnet" "subnet-00" {
   virtual_network_name = "core-cft${var.env}-intsvc-vnet"
 }
 
-
 resource "azurerm_postgresql_virtual_network_rule" "cluster-access" {
   name                = "aks-00"
   resource_group_name = azurerm_resource_group.rg.name
@@ -104,4 +98,10 @@ module "postgresql" {
   pgsql_version             = "14"
 
   common_tags = module.tags.common_tags
+}
+
+resource "azurerm_key_vault_secret" "backstage-db-secret" {
+  name         = "backstage-db-password"
+  value        = module.postgresql.password
+  key_vault_id = data.azurerm_key_vault.ptl.id
 }
