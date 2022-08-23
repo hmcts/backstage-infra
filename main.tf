@@ -13,6 +13,8 @@ resource "random_password" "password" {
 
 locals {
   key_vault_name = var.env == "ptlsbox" ? "cftsbox-intsvc" : "cftptl-intsvc"
+  old_vnet_name = var.env == "ptlsbox" ? "core-cftsbox-intsvc-vnet" : "core-cftptl-intsvc-vnet"
+  old_vnet_rg = var.env == "ptlsbox" ? "aks-infra-cftsbox-intsvc-rg" : "aks-infra-cftptl-intsvc-rg"
 }
 
 data "azurerm_key_vault" "ptl" {
@@ -56,8 +58,8 @@ resource "azurerm_postgresql_database" "backstage_plugin_auth" {
 
 data "azurerm_subnet" "subnet-00" {
   name                 = "aks-00"
-  resource_group_name  = "aks-infra-cft${var.env}-intsvc-rg"
-  virtual_network_name = "core-cft${var.env}-intsvc-vnet"
+  resource_group_name  = local.old_vnet_rg
+  virtual_network_name = local.old_vnet_name
 }
 
 resource "azurerm_postgresql_virtual_network_rule" "cluster-access" {
