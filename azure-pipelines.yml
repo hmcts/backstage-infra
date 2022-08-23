@@ -58,7 +58,7 @@ stages:
           agentPool: ${{ variables.agentPool }}
           terraformVersion: ${{ variables.terraformVersion }}
       - job: Archive
-        dependsOn: Plan_sbox_backstage
+        dependsOn: Plan_ptlsbox_backstage
         pool:
           vmImage: ${{ variables.agentPool }}
         steps:
