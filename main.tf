@@ -21,7 +21,7 @@ module "tags" {
 }
 
 module "postgresql" {
-  source = "git::https://github.com/hmcts/terraform-module-postgresql-flexible?ref=renovate/hashicorp-terraform-1.x"
+  source = "git::https://github.com/hmcts/terraform-module-postgresql-flexible?ref=master"
   env    = var.env
 
   product   = var.product
