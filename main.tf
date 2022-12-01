@@ -24,10 +24,10 @@ module "postgresql" {
   source = "git::https://github.com/hmcts/terraform-module-postgresql-flexible?ref=master"
   env    = var.env
 
-  product   = var.product
-  component = var.component
-  name      = "${var.product}-${var.component}-flex"
-  project   = "cft"
+  product       = var.product
+  component     = var.component
+  name          = "${var.product}-${var.component}-flex"
+  business_area = "cft"
 
   pgsql_databases = [
     {
@@ -40,7 +40,8 @@ module "postgresql" {
   pgsql_delegated_subnet_id = data.azurerm_subnet.this.id
   pgsql_version             = "14"
 
-  common_tags = module.tags.common_tags
+  enable_read_only_group_access = false
+  common_tags                   = module.tags.common_tags
 }
 
 resource "azurerm_key_vault_secret" "backstage-db-secret" {
