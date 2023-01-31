@@ -44,6 +44,42 @@ module "postgresql" {
   common_tags                   = module.tags.common_tags
 }
 
+module "postgresql" {
+  source = "git::https://github.com/hmcts/terraform-module-postgresql-flexible?ref=db-collation"
+  env    = var.env
+
+  product       = var.product
+  component     = var.component
+  name          = "${var.product}-${var.component}"
+  business_area = "cft"
+
+  pgsql_databases = [
+    {
+      name : "backstage_plugin_app"
+    },
+    {
+      name : "backstage_plugin_code-coverage"
+    },
+    {
+      name : "backstage_plugin_auth"
+    },
+    {
+      name : "backstage_plugin_scaffolder"
+    },
+    {
+      name : "backstage_plugin_catalog"
+    },
+    {
+      name : "backstage_plugin_search"
+    }
+  ]
+  pgsql_delegated_subnet_id = data.azurerm_subnet.this.id
+  pgsql_version             = "14"
+
+  enable_read_only_group_access = false
+  common_tags                   = module.tags.common_tags
+}
+
 resource "azurerm_key_vault_secret" "backstage-db-secret" {
   name         = "backstage-db-password"
   value        = module.postgresql.password
