@@ -44,7 +44,7 @@ module "postgresql" {
   common_tags                   = module.tags.common_tags
 }
 
-module "postgresql" {
+module "postgresqlflex" {
   source = "git::https://github.com/hmcts/terraform-module-postgresql-flexible?ref=db-collation"
   env    = var.env
 
