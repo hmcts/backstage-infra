@@ -85,3 +85,9 @@ resource "azurerm_key_vault_secret" "backstage-db-secret" {
   value        = module.postgresql.password
   key_vault_id = data.azurerm_key_vault.ptl.id
 }
+
+resource "azurerm_key_vault_secret" "backstage-db-secretflex" {
+  name         = "backstage-db-passwordflex"
+  value        = module.postgresqlflex.password
+  key_vault_id = data.azurerm_key_vault.ptl.id
+}
