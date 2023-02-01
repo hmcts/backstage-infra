@@ -21,7 +21,7 @@ module "tags" {
 }
 
 module "postgresql" {
-  source = "git::https://github.com/hmcts/terraform-module-postgresql-flexible?ref=master"
+  source = "git::https://github.com/hmcts/terraform-module-postgresql-flexible?ref=db-collation"
   env    = var.env
 
   product       = var.product
