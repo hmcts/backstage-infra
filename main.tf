@@ -37,9 +37,9 @@ module "postgresql" {
       name : "backstage_plugin_auth"
     },
   ]
-  pgsql_delegated_subnet_id = data.azurerm_subnet.this.id
-  pgsql_version             = "14"
-
+  pgsql_delegated_subnet_id     = data.azurerm_subnet.this.id
+  pgsql_version                 = "14"
+  collation                     = var.collation
   enable_read_only_group_access = false
   common_tags                   = module.tags.common_tags
 }

@@ -11,3 +11,8 @@ variable "builtFrom" {
 
 variable "env" {
 }
+
+variable "collation" {
+  default = "en_US.utf8"
+}
+
