@@ -39,7 +39,7 @@ module "postgresql" {
   ]
   pgsql_delegated_subnet_id = data.azurerm_subnet.this.id
   pgsql_version             = "14"
-  
+
   # https://github.com/hmcts/terraform-module-postgresql-flexible/pull/28 changes collation to en_GB
   # setting to en_US means we can skip migrating the data as the collation here doesn't matter much
   collation = "en_US.utf8"
