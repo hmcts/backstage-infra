@@ -11,3 +11,5 @@ variable "builtFrom" {
 
 variable "env" {
 }
+
+variable "aks_subscription_id" {}
