@@ -21,6 +21,10 @@ module "tags" {
 }
 
 module "postgresql" {
+  providers = {
+    azurerm.postgres_network = azurerm.postgres_network
+  }
+  
   source = "git::https://github.com/hmcts/terraform-module-postgresql-flexible?ref=master"
   env    = var.env
 
