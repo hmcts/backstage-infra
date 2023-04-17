@@ -41,7 +41,7 @@ stages:
         parameters:
           environment: 'ptlsbox'
           component: 'backstage'
-          service_connection: 'DTS-CFTSBOX-INTSVC'
+          service_connection: 'DTS-CFTPTL-INTSVC(1baf5470-1c3e-40d3-a6f7-74bfbce4b348)'
           storage_account_rg: 'core-infra-intsvc-rg'
           storage_account_name: 'cftsboxintsvc'
           build: $(Build.BuildNumber)
@@ -83,7 +83,7 @@ stages:
         parameters:
           environment: 'ptlsbox'
           component: 'backstage'
-          service_connection: 'DTS-CFTSBOX-INTSVC'
+          service_connection: 'DTS-CFTPTL-INTSVC(1baf5470-1c3e-40d3-a6f7-74bfbce4b348)'
           storage_account_rg: 'core-infra-intsvc-rg'
           storage_account_name: 'cftsboxintsvc'
           build: $(Build.BuildNumber)
