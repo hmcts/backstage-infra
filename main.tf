@@ -25,7 +25,7 @@ module "postgresql" {
     azurerm.postgres_network = azurerm.postgres_network
   }
 
-  source = "git::https://github.com/hmcts/terraform-module-postgresql-flexible?ref=postgres-vnet-provider"
+  source = "git::https://github.com/hmcts/terraform-module-postgresql-flexible?ref=master"
   env    = var.env
 
   product       = var.product
