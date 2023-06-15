@@ -21,7 +21,6 @@ module "tags" {
 }
 
 module "postgresql" {
-  count = var.env == "ptl" ? 1 : 0
   providers = {
     azurerm.postgres_network = azurerm.postgres_network
   }
@@ -54,8 +53,7 @@ module "postgresql" {
 }
 
 resource "azurerm_key_vault_secret" "backstage-db-secret" {
-  count        = var.env == "ptl" ? 1 : 0
   name         = "backstage-db-password"
-  value        = module.postgresql.password[count.index]
+  value        = module.postgresql.password
   key_vault_id = data.azurerm_key_vault.ptl.id
 }
