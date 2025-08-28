@@ -79,7 +79,7 @@ stages:
           - task: PublishBuildArtifacts@1
             displayName: 'Publish Artifact: drop'
 
-  - stage: Applybackstage
+  - stage: ApplybackstageSBOX
     displayName: "Apply backstage - SBOX"
     dependsOn: GetArtifacts
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
@@ -94,6 +94,12 @@ stages:
           build: $(Build.BuildNumber)
           agentPool: ${{ variables.agentPool }}
           terraformVersion: ${{ variables.terraformVersion }}
+
+  - stage: ApplybackstagePTL
+    displayName: "Apply backstage - PTL"
+    dependsOn: GetArtifacts
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
+    jobs:
       - template: pipeline-templates/terraform-apply.yaml
         parameters:
           environment: 'ptl'
