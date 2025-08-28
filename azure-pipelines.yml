@@ -40,6 +40,17 @@ stages:
 
       - template: pipeline-templates/terraform-plan.yaml
         parameters:
+          environment: 'ptlsbox'
+          component: 'backstage'
+          service_connection: 'DTS-CFTSBOX-INTSVC'
+          storage_account_rg: 'core-infra-intsvc-rg'
+          storage_account_name: 'cftsboxintsvc'
+          build: $(Build.BuildNumber)
+          agentPool: ${{ variables.agentPool }}
+          terraformVersion: ${{ variables.terraformVersion }}
+
+      - template: pipeline-templates/terraform-plan.yaml
+        parameters:
           environment: 'ptl'
           component: 'backstage'
           service_connection: 'DTS-CFTPTL-INTSVC'
@@ -50,7 +61,7 @@ stages:
           terraformVersion: ${{ variables.terraformVersion }}
 
       - job: Archive
-        dependsOn: Plan_ptl_backstage
+        dependsOn: Plan_ptlsbox_backstage
         pool:
           vmImage: ${{ variables.agentPool }}
         steps:
@@ -67,10 +78,20 @@ stages:
             displayName: 'Publish Artifact: drop'
 
   - stage: Applybackstage
-    displayName: "Apply backstage"
+    displayName: "Apply backstage - SBOX"
     dependsOn: GetArtifacts
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     jobs:
+      - template: pipeline-templates/terraform-apply.yaml
+        parameters:
+          environment: 'ptlsbox'
+          component: 'backstage'
+          service_connection: 'DTS-CFTSBOX-INTSVC'
+          storage_account_rg: 'core-infra-intsvc-rg'
+          storage_account_name: 'cftsboxintsvc'
+          build: $(Build.BuildNumber)
+          agentPool: ${{ variables.agentPool }}
+          terraformVersion: ${{ variables.terraformVersion }}
       - template: pipeline-templates/terraform-apply.yaml
         parameters:
           environment: 'ptl'
