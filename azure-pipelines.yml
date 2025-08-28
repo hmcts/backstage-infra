@@ -97,7 +97,7 @@ stages:
 
   - stage: ApplybackstagePTL
     displayName: "Apply backstage - PTL"
-    dependsOn: GetArtifacts
+    dependsOn: ApplybackstageSBOX
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
     jobs:
       - template: pipeline-templates/terraform-apply.yaml
