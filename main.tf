@@ -53,7 +53,7 @@ module "postgresql" {
 }
 
 module "postgresqldb" {
-  count = var.env == "sandbox" ? 1 : 0
+  count = var.env == "ptlsbox" ? 1 : 0
 
   providers = {
     azurerm.postgres_network = azurerm.postgres_network
