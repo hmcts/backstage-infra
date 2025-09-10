@@ -90,7 +90,7 @@ resource "azurerm_key_vault_secret" "backstage-db-secret" {
 }
 
 resource "azurerm_key_vault_secret" "backstage-psqldb-secret" {
-  count        = var.env == "sandbox" ? 1 : 0
+  count        = var.env == "ptlsbox" ? 1 : 0
   name         = "backstage-psqldb-password"
   value        = module.postgresqldb[0].password
   key_vault_id = data.azurerm_key_vault.ptl.id
