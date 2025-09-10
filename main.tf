@@ -52,8 +52,46 @@ module "postgresql" {
   common_tags                   = module.tags.common_tags
 }
 
+module "postgresqldb" {
+  count = var.env == "ptlsbox" ? 1 : 0
+
+  providers = {
+    azurerm.postgres_network = azurerm.postgres_network
+  }
+
+  source = "git::https://github.com/hmcts/terraform-module-postgresql-flexible?ref=master"
+  env    = var.env
+
+  product       = var.product
+  component     = var.component
+  name          = "${var.product}-${var.component}"
+  business_area = "cft"
+
+  pgsql_databases = [
+    {
+      name : "backstage_plugin_catalog"
+    },
+    {
+      name : "backstage_plugin_auth"
+    },
+  ]
+  pgsql_delegated_subnet_id = data.azurerm_subnet.this.id
+  pgsql_version             = "16"
+  collation                 = "en_GB.utf8"
+
+  enable_read_only_group_access = false
+  common_tags                   = module.tags.common_tags
+}
+
 resource "azurerm_key_vault_secret" "backstage-db-secret" {
   name         = "backstage-db-password"
   value        = module.postgresql.password
+  key_vault_id = data.azurerm_key_vault.ptl.id
+}
+
+resource "azurerm_key_vault_secret" "backstage-psqldb-secret" {
+  count        = var.env == "ptlsbox" ? 1 : 0
+  name         = "backstage-psqldb-password"
+  value        = module.postgresqldb[0].password
   key_vault_id = data.azurerm_key_vault.ptl.id
 }
