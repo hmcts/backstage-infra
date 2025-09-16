@@ -90,6 +90,6 @@ resource "azurerm_key_vault_secret" "backstage-db-secret" {
 
 resource "azurerm_key_vault_secret" "backstage-psqldb-secret" {
   name         = "backstage-psqldb-password"
-  value        = module.postgresqldb[0].password
+  value        = module.postgresqldb.password
   key_vault_id = data.azurerm_key_vault.ptl.id
 }
