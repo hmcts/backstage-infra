@@ -53,7 +53,6 @@ module "postgresql" {
 }
 
 module "postgresqldb" {
-  count = var.env == "ptlsbox" ? 1 : 0
 
   providers = {
     azurerm.postgres_network = azurerm.postgres_network
@@ -90,8 +89,7 @@ resource "azurerm_key_vault_secret" "backstage-db-secret" {
 }
 
 resource "azurerm_key_vault_secret" "backstage-psqldb-secret" {
-  count        = var.env == "ptlsbox" ? 1 : 0
   name         = "backstage-psqldb-password"
-  value        = module.postgresqldb[0].password
+  value        = module.postgresqldb.password
   key_vault_id = data.azurerm_key_vault.ptl.id
 }
