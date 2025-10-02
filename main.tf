@@ -18,6 +18,7 @@ module "tags" {
   builtFrom   = var.builtFrom
   environment = var.env
   product     = "cft-platform"
+  expiresAfter = "3000-01-01"
 }
 
 module "postgresql" {
