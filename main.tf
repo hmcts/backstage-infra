@@ -14,10 +14,10 @@ data "azurerm_subnet" "this" {
 }
 
 module "tags" {
-  source      = "git::https://github.com/hmcts/terraform-module-common-tags?ref=master"
-  builtFrom   = var.builtFrom
-  environment = var.env
-  product     = "cft-platform"
+  source       = "git::https://github.com/hmcts/terraform-module-common-tags?ref=master"
+  builtFrom    = var.builtFrom
+  environment  = var.env
+  product      = "cft-platform"
   expiresAfter = var.expiresAfter
 }
 
