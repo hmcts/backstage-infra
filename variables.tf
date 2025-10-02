@@ -13,3 +13,7 @@ variable "env" {
 }
 
 variable "aks_subscription_id" {}
+
+variable "expiresAfter" {
+  default = "3000-01-01"
+}
