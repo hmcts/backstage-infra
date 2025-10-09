@@ -19,7 +19,7 @@ stages:
         pool:
           vmImage: ${{ variables.agentPool }}
         steps:
-          - task: TerraformInstaller@0
+          - task: TerraformInstaller@2
             inputs:
               terraformVersion: ${{ variables.terraformVersion }}
               
