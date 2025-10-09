@@ -6,7 +6,7 @@ jobs:
       - task: TerraformInstaller@0
         inputs:
           terraformVersion: ${{ parameters.terraformVersion }}
-      - task: TerraformCLI@0
+      - task: TerraformCLI@2
         displayName: Init - ${{ parameters.environment }} - ${{ parameters.component }}
         inputs:
           command: 'init'
@@ -18,7 +18,7 @@ jobs:
           backendAzureRmContainerName: 'tfstate'
           backendAzureRmKey: '${{ parameters.component }}.tfstate'
           workingDirectory: '$(System.DefaultWorkingDirectory)'
-      - task: TerraformCLI@0
+      - task: TerraformCLI@2
         displayName: Plan - ${{ parameters.environment }} - ${{ parameters.component }}
         inputs:
           command: 'plan'
