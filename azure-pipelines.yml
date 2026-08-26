@@ -19,7 +19,7 @@ stages:
         pool:
           vmImage: ${{ variables.agentPool }}
         steps:
-          - task: TerraformInstaller@2
+          - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@2
             inputs:
               terraformVersion: ${{ variables.terraformVersion }}
               
