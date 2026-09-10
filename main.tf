@@ -47,9 +47,9 @@ module "postgresqldb" {
   pgsql_version             = "16"
   collation                 = "en_GB.utf8"
 
-  enable_read_only_group_access  = false
+  enable_read_only_group_access = false
   preserve_legacy_jenkins_admin = false
-  common_tags                    = module.tags.common_tags
+  common_tags                   = module.tags.common_tags
 }
 
 resource "azurerm_key_vault_secret" "backstage-psqldb-secret" {
