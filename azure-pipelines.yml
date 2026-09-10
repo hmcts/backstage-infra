@@ -31,6 +31,13 @@ variables:
   - template: vars/input-variables.yaml@cnp-azuredevops-libraries
 
 parameters:
+  - name: overrideAction
+    type: string
+    default: plan
+    values:
+      - plan
+      - apply
+      - destroy
   - name: environment_components
     type: object
     default:
@@ -40,8 +47,7 @@ parameters:
       service_connection: 'DTS-CFTSBOX-INTSVC'
       storage_account_rg: 'core-infra-intsvc-rg'
       storage_account_name: 'cftsboxintsvc'
-      tfvars_file: 'ptlsbox.tfvars'
-      backend_resource_group_name: ''
+      backend_resource_group_name: 'core-infra-intsvc-rg'
       dependsOn: 'Precheck'
     - deployment: 'ptl_backstage'
       environment: 'ptl'
@@ -49,8 +55,7 @@ parameters:
       service_connection: 'DTS-CFTPTL-INTSVC'
       storage_account_rg: 'core-infra-intsvc-rg'
       storage_account_name: 'cftptlintsvc'
-      tfvars_file: 'ptl.tfvars'
-      backend_resource_group_name: ''
+      backend_resource_group_name: 'core-infra-intsvc-rg'
       dependsOn: 'ptlsbox_backstage'
 
 stages:
@@ -85,5 +90,7 @@ stages:
               serviceConnection: ${{ deployment.service_connection }}
               terraformInitSubscription: ${{ variables.terraformInitSubscription }}
               backendResourceGroupName: ${{ deployment.backend_resource_group_name }}
+              backendStorageAccountName: ${{ deployment.storage_account_name }}
+              backendContainerName: 'tfstate'
+              backendKey: 'backstage.tfstate'
               product: ${{ variables.product }}
-              tfvars_file: ${{ deployment.tfvars_file }}
