@@ -27,7 +27,7 @@ module "postgresqldb" {
     azurerm.postgres_network = azurerm.postgres_network
   }
 
-  source = "git::https://github.com/hmcts/terraform-module-postgresql-flexible?ref=master"
+  source = "git::https://github.com/hmcts/terraform-module-postgresql-flexible?ref=DTSPO-30107-additional-postgres-admins"
   env    = var.env
 
   product       = var.product
@@ -47,8 +47,9 @@ module "postgresqldb" {
   pgsql_version             = "16"
   collation                 = "en_GB.utf8"
 
-  enable_read_only_group_access = false
-  common_tags                   = module.tags.common_tags
+  enable_read_only_group_access  = false
+  preserve_legacy_jenkins_admin = false
+  common_tags                    = module.tags.common_tags
 }
 
 resource "azurerm_key_vault_secret" "backstage-psqldb-secret" {
