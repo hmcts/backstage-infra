@@ -7,106 +7,92 @@ trigger:
     include:
       - master
 
+resources:
+  repositories:
+  - repository: cnp-azuredevops-libraries
+    type: github
+    ref: refs/heads/master
+    name: hmcts/cnp-azuredevops-libraries
+    endpoint: 'hmcts'
+
 variables:
-  terraformVersion: 1.4.5
-  agentPool: 'ubuntu-latest'
-  action:
+  - name: terraformVersion
+    value: 1.4.5
+  - name: timeoutInMinutes
+    value: "60"
+  - name: agentPool
+    value: ubuntu-22.04
+  - name: build
+    value: $(Build.BuildNumber)
+  - name: product
+    value: hmcts
+  - name: terraformInitSubscription
+    value: 04d27a32-7a07-48b3-95b8-3c8691e1a263
+  - template: vars/input-variables.yaml@cnp-azuredevops-libraries
+
+parameters:
+  - name: overrideAction
+    type: string
+    default: plan
+    values:
+      - plan
+      - apply
+      - destroy
+  - name: environment_components
+    type: object
+    default:
+    - deployment: 'ptlsbox_backstage'
+      environment: 'ptlsbox'
+      component: 'backstage'
+      service_connection: 'DTS-CFTSBOX-INTSVC'
+      storage_account_rg: 'core-infra-intsvc-rg'
+      storage_account_name: 'cftsboxintsvc'
+      backend_resource_group_name: 'core-infra-intsvc-rg'
+      terraformInitSubscription: '1497c3d7-ab6d-4bb7-8a10-b51d03189ee3'
+      dependsOn: 'Precheck'
+    - deployment: 'ptl_backstage'
+      environment: 'ptl'
+      component: 'backstage'
+      service_connection: 'DTS-CFTPTL-INTSVC'
+      storage_account_rg: 'core-infra-intsvc-rg'
+      storage_account_name: 'cftptlintsvc'
+      backend_resource_group_name: 'core-infra-intsvc-rg'
+      terraformInitSubscription: '1baf5470-1c3e-40d3-a6f7-74bfbce4b348'
+      dependsOn: 'ptlsbox_backstage'
 
 stages:
-  - stage: GetArtifacts
+  - stage: Precheck
     jobs:
-      - job: Validate
+      - job: Precheck
         pool:
           vmImage: ${{ variables.agentPool }}
+        timeoutInMinutes: ${{ variables.timeoutInMinutes }}
         steps:
-          - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@1
-            inputs:
-              terraformVersion: ${{ variables.terraformVersion }}
-              
-          - task: PowerShell@2
-            displayName: Run tests
-            inputs:
-              targetType: 'inline'
-              script: |
-                Install-Module -Name Pester -MaximumVersion 4.99.99 -Force -Verbose -Scope CurrentUser
-                Invoke-Pester ./ci -OutputFormat NUnitXml -OutputFile ./TEST-CI.xml -EnableExit
-              pwsh: true
-          - task: PublishTestResults@2
-            displayName: 'Publish Test Results **/TEST-*.xml'
-            inputs:
-              testResultsFormat: NUnit
-              failTaskOnFailedTests: true
-            condition: always()
+          - template: steps/terraform-precheck.yaml@cnp-azuredevops-libraries
+            parameters:
+              keyvaultName: 'infra-vault-nonprod'
+              keyvaultSecret: 'azure-devops-sp-token'
+              serviceConnection: 'DCD-CFT-Sandbox'
+              overrideAction: ${{ parameters.overrideAction }}
 
-      - template: pipeline-templates/terraform-plan.yaml
-        parameters:
-          environment: 'ptlsbox'
-          component: 'backstage'
-          service_connection: 'DTS-CFTSBOX-INTSVC'
-          storage_account_rg: 'core-infra-intsvc-rg'
-          storage_account_name: 'cftsboxintsvc'
-          build: $(Build.BuildNumber)
-          agentPool: ${{ variables.agentPool }}
-          terraformVersion: ${{ variables.terraformVersion }}
-
-      - template: pipeline-templates/terraform-plan.yaml
-        parameters:
-          environment: 'ptl'
-          component: 'backstage'
-          service_connection: 'DTS-CFTPTL-INTSVC'
-          storage_account_rg: 'core-infra-intsvc-rg'
-          storage_account_name: 'cftptlintsvc'
-          build: $(Build.BuildNumber)
-          agentPool: ${{ variables.agentPool }}
-          terraformVersion: ${{ variables.terraformVersion }}
-
-      - job: Archive
-        dependsOn:
-          - Plan_ptlsbox_backstage
-          - Plan_ptl_backstage
-        pool:
-          vmImage: ${{ variables.agentPool }}
-        steps:
-          - task: CopyFiles@2
-            displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
-            inputs:
-              Contents: |
-                *.tf
-                *.tfvars
-                *tfplan
-              TargetFolder: '$(Build.ArtifactStagingDirectory)'
-
-          - task: PublishBuildArtifacts@1
-            displayName: 'Publish Artifact: drop'
-
-  - stage: ApplybackstageSBOX
-    displayName: "Apply backstage - SBOX"
-    dependsOn: GetArtifacts
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-    jobs:
-      - template: pipeline-templates/terraform-apply.yaml
-        parameters:
-          environment: 'ptlsbox'
-          component: 'backstage'
-          service_connection: 'DTS-CFTSBOX-INTSVC'
-          storage_account_rg: 'core-infra-intsvc-rg'
-          storage_account_name: 'cftsboxintsvc'
-          build: $(Build.BuildNumber)
-          agentPool: ${{ variables.agentPool }}
-          terraformVersion: ${{ variables.terraformVersion }}
-
-  - stage: ApplybackstagePTL
-    displayName: "Apply backstage - PTL"
-    dependsOn: ApplybackstageSBOX
-    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
-    jobs:
-      - template: pipeline-templates/terraform-apply.yaml
-        parameters:
-          environment: 'ptl'
-          component: 'backstage'
-          service_connection: 'DTS-CFTPTL-INTSVC'
-          storage_account_rg: 'core-infra-intsvc-rg'
-          storage_account_name: 'cftptlintsvc'
-          build: $(Build.BuildNumber)
-          agentPool: ${{ variables.agentPool }}
-          terraformVersion: ${{ variables.terraformVersion }}
+  - ${{ each deployment in parameters.environment_components }}:
+    - stage: ${{ deployment.deployment }}
+      dependsOn: ${{ deployment.dependsOn }}
+      jobs:
+        - job: TerraformPlanApply
+          pool:
+            vmImage: ${{ variables.agentPool }}
+          timeoutInMinutes: ${{ variables.timeoutInMinutes }}
+          steps:
+          - template: steps/terraform.yaml@cnp-azuredevops-libraries
+            parameters:
+              overrideAction: ${{ parameters.overrideAction }}
+              environment: ${{ deployment.environment }}
+              component: ${{ deployment.component }}
+              serviceConnection: ${{ deployment.service_connection }}
+              terraformInitSubscription: ${{ deployment.terraformInitSubscription }}
+              backendResourceGroupName: ${{ deployment.backend_resource_group_name }}
+              backendStorageAccountName: ${{ deployment.storage_account_name }}
+              backendContainerName: 'tfstate'
+              backendKey: ${{ deployment.component }}.tfstate
+              product: ${{ variables.product }}
